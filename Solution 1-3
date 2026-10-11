@@ -1,0 +1,13 @@
+import random
+def dice():
+  if random.random() < 0.25: return 6
+  else: return random.randint(1, 5)
+def test_dice():
+  rolls = [dice() for x in range(100000)]
+  sixes = rolls.count(6)
+  range_ok = all(1 <= x <= 6 for x in rolls)
+  print(f"Number of sixes: {sixes}")
+  print(f"Only values in range 1 to 6: {range_ok}")
+  if 24700 <= sixes <= 25300 and range_ok: print ("OK")
+  else: print("FAILED")
+test_dice()
