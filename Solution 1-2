@@ -1,0 +1,17 @@
+# first version to solve this problem (function):
+def leap_year(i):
+    if i % 400 == 0: return True # Best way to solve this problem seems to be via the modulo operator (division with 0 remainder).
+    elif i % 100 == 0: return False
+    elif i % 4 == 0: return True
+    else: return False
+test = [1800, 1813, 2000, 2025, 2100, 2400, 2404] # put in the year(s) you want to test
+for i in test: print(f"{i}: {"leap year" if leap_year(i) else "no leap year"}")
+
+
+
+# second version to solve this problem (loop):
+i = 2000 # put in the year you want to test
+if i % 400 == 0: print("leap year")
+elif i % 100 == 0: print("no leap year")
+elif i % 4 == 0: print("leap year")
+else: print("no leap year")
