@@ -1,5 +1,5 @@
 for i in range(1, 26):
-    if i % 3 == 0 and i % 5 == 0: print("FizzBuzz") # best way to define this function seems to be via the modulo operator (division with 0 remainder)
-    elif i % 5 == 0: print("Buzz")
+    if i % 3 == 0 and i % 5 == 0: print("FizzBuzz") # best way to solve this problem seems to be the modulo operator (division with 0 remainder)
     elif i % 3 == 0: print("Fizz")
+    elif i % 5 == 0: print("Buzz")
     else: print(i)
