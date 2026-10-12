@@ -2,5 +2,12 @@ import numpy as np
 def check_alive(health):
     if health <= 0: return False
     else: return True
-test = np.arange(-10, 11, 1) # the arange command gives all numbers between the defined limit (-10 and 11) in steps of 1
+test = np.arange(-10, 11, 1) # the arange command gives all numbers between the defined limit (-10 and 11), here in steps of 1
 for health in test: print(f"{health} = {check_alive(health)}")
+
+
+# another possible solution:
+def check_alive(health):
+    if health <= 0: return False
+    else: return True
+for health in range(-10, 11): print(f"{health} = {check_alive(health)}")
