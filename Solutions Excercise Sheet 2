@@ -1,1 +1,23 @@
+import numpy as np
+from matplotlib import pyplot as plt
+from scipy.io import readsav
+filepath = "galahamr.sav"
+stars = readsav(filepath)  
+#Pull out some attributes of the stars we want to look at and store them in arrays
+logg = stars['f']['logg']  #surface gravity   
+teff = stars['f']['teff']  #effective temperature
+mass = stars['f']['massmean']  #mass
+lum = mass**4.  #luminosity for stars 0.43 < Msun < 2
+age = stars['f']['agemean'] #age
+feh = stars['f']['__fe_h_'] #[Fe/H], a logarithmic Iron abundance
+afe = stars['f']['__alpha_fe_']  #[Alpha/Fe], logarithmic relative abundance of alpha elements(O, Si, etc.) relative to Iron
 
+plt.figure(figsize=(10, 7))
+scatter = plt.scatter(teff, logg, c=age, cmap='coolwarm', s=7)
+plt.xlabel(r'Effective temperature T eff (K)')
+plt.ylabel(r'log(g)')
+plt.title('Hertzsprung-Russell Diagram: Stars coloured by age')
+plt.colorbar(scatter, label='Age')
+plt.gca().invert_xaxis()
+plt.tight_layout()
+plt.show()
