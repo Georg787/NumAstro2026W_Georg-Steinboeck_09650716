@@ -13,7 +13,6 @@ for i in range(len(bin_centers)):
 plt.figure(figsize=(9, 6))
 plt.scatter(logg, teff, s=7, alpha=0.3, label='Stars')
 plt.plot(bin_centers, mean_teff, 'y-', linewidth=3, label='Mean temperature')
-
 plt.xlabel(r'log(g)')
 plt.ylabel(r'T eff (K)')
 plt.title('Running average of T eff')
