@@ -1,0 +1,22 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+bins = np.linspace(x.min(), x.max(), 40) # Divides log(g) into 40 bins
+bin_centers = (bins[:-1] + bins[1:]) / 2
+
+mean_teff = np.full(len(bin_centers), np.nan) # Creates an array with all bin centers, reserving space for concrete numbers by using the "not a number" command
+
+for i in range(len(bin_centers)): 
+    bin_mask = (x >= bins[i]) & (x < bins[i + 1]) # Regards all stars with log(g) values in an interval
+    if np.any(bin_mask): mean_teff[i] = np.mean(y[bin_mask]) # np.any checks, if there are any stars in the interval, np.mean computes the mean temperature
+
+plt.figure(figsize=(9, 6))
+plt.scatter(logg, teff, s=7, alpha=0.3, label='Stars')
+plt.plot(bin_centers, mean_teff, 'y-', linewidth=3, label='Mean temperature')
+
+plt.xlabel(r'log(g)')
+plt.ylabel(r'T eff (K)')
+plt.title('Running average of T eff')
+plt.legend()
+plt.tight_layout()
+plt.show()
