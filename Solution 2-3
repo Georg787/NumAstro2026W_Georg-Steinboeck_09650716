@@ -1,0 +1,35 @@
+mask = np.isfinite(teff) & np.isfinite(logg) & np.isfinite(age) # Keeps only stars with finite temperature, gravity and age
+g = logg[mask]
+T = teff[mask]
+A = age[mask]
+
+valid = np.isfinite(mean_teff) 
+T_boundary = np.interp(g, bin_centers[valid], mean_teff[valid]) # Interpolate the running-average temperature
+
+hot = T > T_boundary
+cool = T <= T_boundary # Divide the stars into hot and cool subsamples
+
+# Calculate mean age and standard deviation
+mean_hot = np.mean(A[hot])
+std_hot = np.std(A[hot])
+mean_cool = np.mean(A[cool])
+std_cool = np.std(A[cool])
+
+print("Hot stars:")
+print("Mean age =", mean_hot)
+print("Standard deviation =", std_hot)
+
+print("\nCool stars:")
+print("Mean age =", mean_cool)
+print("Standard deviation =", std_cool)
+
+lower = mean_hot + std_hot
+upper = mean_cool - std_cool
+
+if lower <= upper:
+    within_range = (A >= lower) & (A <= upper)
+    percentage = 100 * np.sum(within_range) / len(A)
+    print("Age interval:", lower, "to", upper)
+    print("Percentage of stars:", percentage, "%")
+else:
+    print("The age interval is empty.")
