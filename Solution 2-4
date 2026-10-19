@@ -1,0 +1,57 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+mask = (np.isfinite(age) & np.isfinite(feh) & np.isfinite(mass) & np.isfinite(lum) & (mass > 0) & (lum > 0)) # Selects valid data
+A = np.asarray(age[mask]).flatten() # .flatten transforms into a one dimensional array
+F = np.asarray(feh[mask])
+M = np.asarray(mass[mask])
+L = np.asarray(lum[mask])
+
+age_bins = np.linspace(A.min(), A.max(), 50)
+feh_bins = np.linspace(F.min(), F.max(), 50) # 2. Defines 50 bins on every axis for the 2D density distributions
+
+# Calculate weighted averages
+mean_age_mass = np.average(A, weights=M)
+mean_feh_mass = np.average(F, weights=M)
+mean_age_lum = np.average(A, weights=L)
+mean_feh_lum = np.average(F, weights=L)
+
+# Create weighted 2D histograms
+H_mass, age_edges, feh_edges = np.histogram2d(A, F, bins=[age_bins, feh_bins], weights=M) # sums up the mass of all stars in the bins
+H_lum, age_edges, feh_edges = np.histogram2d(A, F, bins=[age_bins, feh_bins], weights=L)
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 5)) # to create 2 plots in one line
+
+# Plot: Mass-weighted density
+im1 = axes[0].pcolormesh(age_edges, feh_edges, H_mass.T, shading='auto', cmap='magma')
+
+axes[0].scatter(mean_age_mass, mean_feh_mass, marker='X', s=140, color='red', edgecolor='white', label='Weighted mean')
+
+axes[0].set_xlabel('Age')
+axes[0].set_ylabel('[Fe/H]')
+axes[0].set_title('Mass-weighted 2D distribution')
+axes[0].legend()
+fig.colorbar(im1, ax=axes[0], label='Sum of stellar masses')
+
+# Plot: Luminosity-weighted density
+im2 = axes[1].pcolormesh(age_edges, feh_edges, H_lum.T, shading='auto', cmap='magma')
+
+axes[1].scatter(mean_age_lum, mean_feh_lum, marker='X', s=140, color='red', edgecolor='white', label='Weighted mean')
+
+axes[1].set_xlabel('Age')
+axes[1].set_ylabel('[Fe/H]')
+axes[1].set_title('Luminosity-weighted 2D distribution')
+axes[1].legend()
+fig.colorbar(im2, ax=axes[1], label='Sum of stellar luminosities')
+
+plt.tight_layout()
+plt.show()
+
+# Print the weighted averages
+print("Mass-weighted averages:")
+print(f"Mean age       = {mean_age_mass:.5f}") # .5f gives 5 positions after the comma
+print(f"Mean [Fe/H]    = {mean_feh_mass:.5f}")
+
+print("\nLuminosity-weighted averages:")
+print(f"Mean age       = {mean_age_lum:.5f}")
+print(f"Mean [Fe/H]    = {mean_feh_lum:.5f}")
