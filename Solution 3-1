@@ -1,0 +1,135 @@
+Solution using the bisection method:
+
+import numpy as np
+import matplotlib.pyplot as plt
+from numpy import exp
+
+def bisection(f, a, b, tol, iterations=0): # tol = tolerance
+    if np.sign(f(a)) == np.sign(f(b)): 
+        print("Bisection fails.")
+        return None, iterations
+    m = (a + b)/2
+    iterations += 1
+    if np.abs(f(m)) < tol: return m, iterations # stopping condition, report m as root
+    elif np.sign(f(a)) == np.sign(f(m)): return bisection(f, m, b, tol, iterations) # both ways produce the same
+    elif f(b) * f(m) > 0: return bisection(f, a, m, tol, iterations) # both ways produce the same
+
+# test für die gegebene Funktion:
+def f(x): return np.exp(x)-1-x-(x**2)/2
+
+a = -1
+b = 2
+tol = 0.001
+
+Nullstelle, iterations = bisection(f, a, b, tol)
+
+print("Nullstelle:", Nullstelle)
+
+if Nullstelle is not None:
+    print("Funktionswert:", f(Nullstelle))
+    print("Anzahl Iterationen:", iterations)
+
+
+
+Solution using the secant method:
+
+import numpy as np
+import matplotlib.pyplot as plt
+from numpy import exp
+
+def secant(f, a, b, tol, iterations=0):
+    c = b - (f(b) * (b - a)) / (f(b) - f(a))
+    while abs(f(c)) > tol:
+        a = b
+        b = c
+        c = b - (f(b) * (b - a)) / (f(b) - f(a))
+        iterations += 1
+    return c, iterations
+
+# test für die gegebene Funktion:
+def f(x): return np.exp(x)-1-x-(x**2)/2
+
+a = -1
+b = 2
+tol = 0.001
+
+Nullstelle, iterations = secant(f, a, b, tol)
+
+print("Nullstelle:", Nullstelle)
+print("Funktionswert:", f(Nullstelle))
+print("Anzahl Iterationen:", iterations)
+
+
+Solution using the false position method:
+
+import numpy as np
+import matplotlib.pyplot as plt
+from numpy import exp
+
+def false_position(f, a, b, tol):
+    iterations = 0
+    if f(a) * f(b) >= 0: 
+        print("unsuitable brackets")
+        return None, iterations
+    while True: 
+        c = b - f(b) * (b - a) / (f(b) - f(a))
+        iterations += 1
+        if np.abs(f(c)) < tol: 
+            return c, iterations
+        if f(a) * f(c) < 0: 
+            b = c
+        else: 
+            a = c
+
+# test für die gegebene Funktion exp(x)-1-x-(x**2)/2:
+def f(x): return exp(x)-1-x-(x**2)/2
+
+a = -1
+b = 2
+tol = 0.001
+
+Nullstelle, iterations = false_position(f, a, b, tol)
+
+print("Nullstelle:", Nullstelle)
+print("Funktionswert:", f(Nullstelle))
+print("Anzahl Iterationen:", iterations)
+
+
+Solution using the Newton-Raphson method:
+
+import numpy as np
+
+def newton(f, df, a, tol, iterations=0):
+    iterations += 1
+    if df(a) == 0:
+        raise Error("Fehler: Die Ableitung ist null.")
+    
+    if abs(f(a)) < tol:
+        return a, iterations
+    else:
+        return newton(f, df, a - f(a)/df(a), tol, iterations)
+
+# test für die gegebene Funktion exp(x)-1-x-(x**2)/2:
+def f(x): return np.exp(x)-1-x-(x**2)/2
+def df(x): return np.exp(x)-1-x
+
+a = -1
+tol = 0.001
+
+Nullstelle, iterations = newton(f, df, a, tol)
+
+print("Nullstelle:", Nullstelle)
+print("Funktionswert:", f(Nullstelle))
+print("Anzahl Iterationen:", iterations)
+
+
+"""
+Discussion: Using tolerance 0.001 the bisection method produces the best approximation (0.125) with only 3 iterations (fastest), whereas the false positions method needs 93 iterations to return the worst 
+approximation (-0.184) of all methods (slowest method); so the false position method does not seem to be suitable for this problem. 
+"""
+
+
+
+
+
+
