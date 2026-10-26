@@ -1,0 +1,45 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+re = np.linspace(-2, 2, 500) # generating complex plane
+im = np.linspace(-2, 2, 500)
+X, Y = np.meshgrid(re, im) # creating a full grid
+Z = X + 1j * Y
+
+# Newton-Raphson iteration
+max_iterations = 80
+tol = 0.00001
+z = Z.copy()
+for n in range(max_iterations):
+    fz = z**3 - 1
+    dfz = 3 * z**2
+    converged = np.abs(fz) < tol # Points that have already converged
+    valid = np.abs(dfz) > 0     # make sure that no division by zero takes place
+    z[valid] = z[valid] - fz[valid] / dfz[valid]
+
+roots = np.exp(2j * np.pi * np.arange(3) / 3) # Calculate the three roots of z**3 - 1
+print("Roots:")
+for root in roots:
+    print(root)
+
+distances = np.array([np.abs(z - root) for root in roots]) # Find the nearest root for every point
+nearest_root = np.argmin(distances, axis=0)
+
+converged = np.abs(z**3 - 1) < tol # Identify points that have already converged
+nearest_root[~converged] = -1 # "~converged" means not converged, all within max_iterations not converged points get the value -1
+
+# Plot the Newton fractal
+plt.figure(figsize=(10, 10))
+plt.imshow(nearest_root, # array that is shown
+           extent=[-2, 2, -2, 2], #xmin, xmax, ymin, ymax
+           origin="lower", # x axis is Re
+           cmap="magma", 
+           interpolation="nearest", # no interpolation between the colours
+           vmin=-1, vmax=2) # 4 possible values = colours (-1, 0, 1, 2 according to the 3 roots and -1 for no convergence to any root)
+plt.scatter(roots.real, roots.imag, color="black", marker="x", s=80, label="Roots")
+plt.xlabel("Real part")
+plt.ylabel("Imaginary part")
+plt.title("Newton Fractal for f(z) = z³ - 1")
+plt.legend()
+plt.tight_layout()
+plt.show()
