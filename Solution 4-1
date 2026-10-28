@@ -1,0 +1,57 @@
+# computing lagrange polynomial and plot
+
+import numpy as np       
+import matplotlib.pyplot as plt   
+from scipy.interpolate import lagrange
+
+x = np.arange(7,8,0.001)   #dummy range for function
+y = np.cos(-2*np.pi*x) +0.4*x**2  #function f(x)
+
+xi = np.array((7.2,7.4,7.6,7.8))   # points for interpolation
+yi = np.array((21.04, 21.12, 22.39, 24.77))
+
+p = lagrange(xi, yi) # compute the lagrange polynomial
+print("Lagrange polynomial p(x):")
+print(p)
+
+yp = p(x)
+
+plt.figure(figsize=(8,8))
+plt.plot(x,y,label='f(x)')  
+plt.plot(x,yp,"--", label="Lagrange polynomial p(x)")
+plt.scatter(xi, yi, color="red", zorder=3, label="Interpolation points")
+plt.xlabel('x',fontsize=17)
+plt.ylabel('y',fontsize=17)
+plt.grid(True)
+plt.legend(loc='best',fontsize=15)
+plt.tight_layout()
+
+
+
+# estimation of the maximum absolute error
+
+"""
+to compute max_error we need the fourth derivative of the function (because we have four points)
+the fourth derivative of f(x): f4(x) = (2*pi)**4 * cos(2*pi*x) -> so max f4(x) = (2*pi)**4
+"""
+
+import numpy as np
+from math import factorial
+
+max_derivative = (2 * np.pi)**4 # max derivative (computed analytically)
+
+def product(x): 
+    return abs((x-7.2)*(x-7.4)*(x-7.6)*(x-7.8))
+x = np.linspace(7.2,7.8,100000)
+P=product(x)
+max_product = np.argmax(P)
+
+error_bound = max_derivative * P[max_product] / factorial(4)
+
+print("Maximum fourth derivative:", max_derivative)
+print("Maximum product:", P[max_product])
+print("Maximum absolute error bound:", error_bound)
+
+
+
+
