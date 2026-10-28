@@ -1,0 +1,28 @@
+import numpy as np
+
+xi = np.array([0,0,1,1])  #x_1,x_1,x_2,x_2
+yi = np.array([0,1,1,0])  #y_1,y_2,y_2,y_1
+zi = np.array([-0.7,0.3,2.4,2.6])  
+
+xr = np.random.uniform()
+yr = np.random.uniform()
+print("xr =", xr, "\nyr =", yr)
+
+z11, z12, z22, z21 = zi
+
+zr = ((1-xr)*(1-yr)*z11+(1-xr)*yr*z12+xr*yr*z22+(1-yr)*xr*z21) # formula for bilinear interpolation
+
+print("Result interpolation:", zr)
+
+plt.figure(figsize=(10,10))
+plt.scatter(xi,yi,c=zi,s=170,marker='o',cmap='jet',edgecolor='black')
+plt.colorbar(label='z = f(x,y)')
+plt.xlabel('X',fontsize=17)
+plt.ylabel('Y',fontsize=17)
+plt.scatter(xr,yr,edgecolor='black',marker='s',s=290,c='white')
+plt.text(0.05,0.05,'($x_1,y_1)$',fontsize=12)
+plt.text(0.05,0.95,'($x_1,y_2)$',fontsize=12)
+plt.text(0.9,0.95,'($x_2,y_2)$',fontsize=12)
+plt.text(0.9,0.05,'($x_2,y_1)$',fontsize=12)
+plt.text(xr,yr-0.1,'($x_r,y_r)$',fontsize=20)
+plt.tight_layout()
