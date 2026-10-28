@@ -1,0 +1,15 @@
+"""
+formula for the error in linear interpolation: abs(f(x)-p(x))=abs(f2(u)/2)*abs((x-x0)*(x-x1))
+with step size d and the fact, that max_error will occur at d/2 we obtain max_error = (d**2)/8*max(abs(f2(u)))
+assumption:  interval[0,1]
+f2(x) = 42*pi*x**5 -> max f2=42*pi in interval[0,1]
+"""
+
+import numpy as np
+
+error_max = 1e-6
+max_f2 = 42 * np.pi # Maximum second derivative in interval [0, 1]
+d_max = np.sqrt(8 * error_max / max_f2) # Maximum step size at given max error bound
+d_sum = int(1 / d_max) # Number of subintervals needed over [0, 1]
+print(f"Maximum step size: {d_max:.8f}")
+print(f"Number of intervals: {d_sum}")
