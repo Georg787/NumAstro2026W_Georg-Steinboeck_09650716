@@ -1,0 +1,3 @@
+import numpy as np
+sid = "09650716"
+seed = np.random.seed(sid)
