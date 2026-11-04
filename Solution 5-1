@@ -84,4 +84,5 @@ print(f"q: {q_sum}")
 
 Discussion: 
 q_sum is by the factor 5 larger for the second function compared to the first function, so the numerical approximation works better for the first function. The larger h, the larger the difference between
-the analytical solution and the numerical solution, for example h=0.01 leads for the first function to q_sum = 1.1*10**-4 whereas h=0.0001 results in q_sum=1.1*10**-8
+the analytical solution and the numerical solution, for example h=0.01 leads for the first function to q_sum = 1.1*10**-4 whereas h=0.0001 results in q_sum=1.1*10**-8 (that is, because the truncation error is 
+proportional to h**2.
