@@ -1,0 +1,87 @@
+Calculations for the first function:
+
+import numpy as np
+import matplotlib.pyplot as plt
+from numpy import exp, cos
+import sympy
+
+
+def f1(x):
+    return x**2+np.cos(x)
+def f2(x):
+    return np.exp(x)-x**3
+
+x=np.linspace(1,5,50)
+h=0.0001
+
+def num_deriv1(x,h):
+    return (f1(x+h)-f1(x-h))/2/h # formula for the numerical calculation
+
+x_sym = sympy.symbols('x') # für sympy müssen numerische Werte in symbolische Werte umgeschrieben werden
+expr=x_sym**2+sympy.cos(x_sym)
+expr_diff=sympy.diff(expr,x_sym)  # sympy.diff calculates the analytic derivative for x_sym
+sym_deriv1 = sympy.lambdify(x_sym,expr_diff,'numpy') # lambdify wandelt symbolische Ergebnisse wieder in numerische um, die dann mit numpy weiterverarbeitet werden können
+
+def deviation(x,h):
+    return num_deriv1(x,h)-sym_deriv1(x)
+def q(x,h):
+    return deviation(x,h)/sym_deriv1(x)
+q_sum=np.sum(q(x,h))
+
+print("Symbolic derivative:", expr_diff)
+for i in range(len(x)):
+    #print(f"x = {x[i]:.2f}, f1(x) = {f1(x[i]):.4f}") # just in case you also want to calculate and print the values of f(x)
+    print(f"x = {x[i]:.2f}, " 
+          f"Numerical Derivative: {num_deriv1(x[i],h):.4f}, "
+            f"Analytic Derivative: {sym_deriv1(x[i]):.4f}, "
+            f"Deviation: {deviation(x[i],h):.8f}")
+print(f"q: {q_sum}")
+
+
+
+
+Calculations for the second function:
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+from numpy import exp, cos
+import sympy
+
+
+def f1(x):
+    return x**2+np.cos(x)
+def f2(x):
+    return np.exp(x)-x**3
+
+x=np.linspace(1,5,50)
+h=0.0001
+
+def num_deriv2(x,h):
+    return (f2(x+h)-f2(x-h))/2/h
+
+x_sym = sympy.symbols('x') # für sympy müssen numerische Werte in symbolische Werte umgeschrieben werden
+expr=sympy.exp(x_sym)-x_sym**3
+expr_diff=sympy.diff(expr,x_sym)
+sym_deriv2 = sympy.lambdify(x_sym,expr_diff,'numpy') # lambdify wandelt symbolische Ergebnisse wieder in numerische um, die dann mit numpy weiterverarbeitet werden können
+
+def deviation(x,h):
+    return num_deriv2(x,h)-sym_deriv2(x)
+def q(x,h):
+    return deviation(x,h)/sym_deriv2(x)
+q_sum=np.sum(q(x,h))
+
+print("Symbolic derivative:", expr_diff)
+for i in range(len(x)):
+    #print(f"x = {x[i]:.2f}, f2(x) = {f2(x[i]):.4f}")
+    print(f"x = {x[i]:.2f}, " 
+          f"Numerical Derivative: {num_deriv2(x[i],h):.4f}, "
+            f"Analytic Derivative: {sym_deriv2(x[i]):.4f}, "
+            f"Deviation: {deviation(x[i],h):.8f}")
+print(f"q: {q_sum}")
+
+
+
+Discussion: 
+q_sum is by the factor 5 larger for the second function compared to the first function, so the numerical approximation works better for the first function. The larger h, the larger the difference between
+the analytical solution and the numerical solution, for example h=0.01 leads for the first function to q_sum = 1.1*10**-4 whereas h=0.0001 results in q_sum=1.1*10**-8
