@@ -1,0 +1,59 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Task A) Calculations
+
+N=10
+x=np.random.random(N)
+
+def f(x):
+    return np.cos(np.pi*x/2)
+FN=np.mean(f(x))
+print("Integral numerical:" , FN)
+
+#Check with analytic result:
+I=2/np.pi
+diff=FN-I
+print("Integral analytical:", I)
+print("Difference:", diff)
+
+# Variance:
+var=(np.mean(f(x)**2)-FN**2)/N
+print("Variance:", var)
+
+# Task B) Plot
+
+N_values = [10, 100, 500, 1000, 5000, 10000]
+
+integrals = []
+variances = []
+
+for N in N_values:
+    x = np.random.random(N)
+    FN = np.mean(f(x))
+    integrals.append(FN)
+   
+    var = (np.mean(f(x)**2)-FN**2)/N
+    variances.append(var)
+
+# Plot results
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+axes[0].plot(N_values, integrals, 'o-', label="Monte Carlo")
+axes[0].axhline(I, linestyle='--', label="Exact value")
+axes[0].set_xscale('log')
+axes[0].set_xlabel("Number of points N")
+axes[0].set_ylabel("Integral I")
+axes[0].set_title("Mean-value Monte Carlo integration")
+axes[0].legend()
+axes[0].grid()
+
+axes[1].loglog(N_values, variances, 'o-', label="Monte Carlo variance")
+axes[1].set_xlabel("Number of points N")
+axes[1].set_ylabel("Variance of integral")
+axes[1].set_title("Variance as a function of N")
+axes[1].legend()
+axes[1].grid()
+
+plt.tight_layout()
+plt.show()
