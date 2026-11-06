@@ -19,13 +19,13 @@ print("Own trapezoid calculation:", L)
 
 # Built in trapezoid calculation
 L_trap=int(scipy.integrate.trapezoid(g,R))
-print("Built in calulation:",L_trap)
+print("Built in trapezoid calculation:", L_trap)
 
 # Built in Simpson's rule calculation
-L_simpson = int(simpson(g, x=R))
-print("Simpson's rule:", L_simpson)
+L_simpson = int(scipy.integrate.simpson(g, x=R))
+print("Built in Simpson calculation:", L_simpson)
 
 # Results:
 Own trapezoid calculation: 1285380
-Built in calulation: 1285408
-Simpson's rule: 1282549
+Built in trapezoid calculation: 1285408
+Built in Simpson calculation: 1282549
