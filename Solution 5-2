@@ -1,0 +1,31 @@
+import numpy as np
+import scipy
+
+data = np.loadtxt("surface_luminosity.txt")
+
+R = data[:, 0]
+Sigma = data[:, 1]
+
+def f(R):
+    return Sigma*2*np.pi*R
+g=f(R)
+
+#L=int((max(R)-min(R))/(len(R)-1)*(g[0]/2+np.sum(g[1:-1])+g[-1]/2))  first try, didn´t work because the steps in R are not equal!!
+L = 0
+for i in range(len(R)-1):
+    L += int((g[i]+g[i+1])/2 * (R[i+1]-R[i]))
+
+print("Own trapezoid calculation:", L)
+
+# Built in trapezoid calculation
+L_trap=int(scipy.integrate.trapezoid(g,R))
+print("Built in calulation:",L_trap)
+
+# Built in Simpson's rule calculation
+L_simpson = int(simpson(g, x=R))
+print("Simpson's rule:", L_simpson)
+
+# Results:
+Own trapezoid calculation: 1285380
+Built in calulation: 1285408
+Simpson's rule: 1282549
