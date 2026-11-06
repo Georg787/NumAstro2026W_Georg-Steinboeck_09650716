@@ -10,11 +10,11 @@ def f(R):
     return Sigma*2*np.pi*R
 g=f(R)
 
+# Own trapezoid calculation:
 #L=int((max(R)-min(R))/(len(R)-1)*(g[0]/2+np.sum(g[1:-1])+g[-1]/2))  first try, didn´t work because the steps in R are not equal!!
 L = 0
 for i in range(len(R)-1):
     L += int((g[i]+g[i+1])/2 * (R[i+1]-R[i]))
-
 print("Own trapezoid calculation:", L)
 
 # Built in trapezoid calculation
