@@ -1,0 +1,113 @@
+"""
+Question 1) 
+1) Newton-Raphson Method - does not always converge (f' must exist, f'' must be finite)
+2) False position method - always converges
+3) Secant method - does not always converge (f must be sufficiently continuous)
+4) Bisecant method - always converges
+
+Question 2)
+Trapezoid rule is a linear integration, whereas Simspons rule uses higher polynomials.
+
+Question 3)
+The simplest way are cubic splines.
+
+Question 4)
+LU decomposition divides a matrix A in two triangular matrices (upper triangular matrix U and lower triangular matrix L). The 
+solution of a triangular set of equations is simpler.
+
+Question 5)
+The Jacobian matrix J = dFi/dxj.
+No, it can not always find a solution.
+"""
+
+
+# Exercise 1) a) The highest polynomial degree is 3. 
+
+# Exercise 1) b) + d) interpolation:
+
+import numpy as np       
+import matplotlib.pyplot as plt   
+from scipy.interpolate import lagrange
+
+x = np.arange(0,2000,10)   #dummy range for function
+
+xi = np.array((0,1000,1500,2000))  
+yi = np.array((214000, 1140, 551, 336)) 
+
+p = lagrange(xi, yi) # compute the lagrange polynomial
+print("Lagrange polynomial p(x):")
+print(p)
+
+yp = p(x)
+
+plt.figure(figsize=(8,8))
+plt.plot(x,yp,"--", label="Lagrange polynomial p(x)")
+plt.scatter(xi, yi, color="red", zorder=3, label="Interpolation points")
+plt.xlabel('x',fontsize=17)
+plt.ylabel('y',fontsize=17)
+plt.grid(True)
+plt.legend(loc='best',fontsize=15)
+plt.tight_layout()
+
+# Exercise 1) c) 
+
+import numpy as np
+import scipy
+
+data = np.loadtxt("surface_luminosity.txt")
+
+x=np.linspace(0,2000,100)
+
+def f(x):
+    return -7.019e-05*x**3 + 0.3166*x**2 - 459.3*x + 2.14e+05
+g=f(x)
+
+L = 0
+for i in range(len(x)-1):
+    L += int((g[i]+g[i+1])/2 * (x[i+1]-x[i]))
+
+L_simpson = int(scipy.integrate.simpson(g, x))
+print("Approximate Luminosity:", L_simpson, "L_sun")
+
+# Result: Approximate Luminosity: 72906663 L_sun
+
+# Exercise 2) a) b) d)
+
+import numpy as np
+import matplotlib.pyplot as plt
+from numpy import exp, cos
+import sympy
+
+t=np.linspace(0.1,2,50)
+dt=0.01
+
+def f(t):
+    return 100-50*exp(-0.2*t)
+def fpr_forward(t,dt):
+    return (f(t+dt)-f(t-dt))/2/dt
+def fpr_center(t,dt):
+    return (f(t+dt)-f(t))/dt
+
+
+for i in range(len(t)):
+    print(f"t = {t[i]:.2f}, " 
+          f"Center Method: {fpr_center(t[i],dt):.4f}, "
+            f"Forward Method: {fpr_forward(t[i],dt):.4f}")
+
+"""
+The forward method gives results, that are slightly higher than those of the center method.
+The center method is more accurate. This is, because the fractional error is of 1 or 2 orders of magnitude better than in the non symmetric form.
+"""
+
+# Exercise 2) c)
+
+plt.figure(figsize=(10, 7))
+plt.plot(t, fpr_forward,"y", label="fpr_forward") 
+plt.plot(t, fpr_center,"r")
+plt.xlabel("t")
+plt.ylabel("v")
+plt.title('V-diagram')
+plt.tight_layout()
+plt.show()
+
+# running out of time, sorry!
