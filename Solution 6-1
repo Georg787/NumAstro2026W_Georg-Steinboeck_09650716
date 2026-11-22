@@ -1,0 +1,48 @@
+import matplotlib.pyplot as plt
+import numpy as np
+from numpy import log
+
+lamb = 1.21 * 10**(-4)
+halflife = log(2)/lamb
+
+dt = 100
+t_max = 10000
+t=np.arange(0, t_max+dt, dt) # time array from 0 to 10000
+
+# Euler formula
+N = np.full(len(t), np.nan) # dummy array for N to be calculated later
+N[0] = 100 # assumed initital number of nuclei, respectively 100%
+
+for i in range(len(t)-1):
+    N[i+1]=N[i]-lamb*dt*N[i]
+
+# Runge Kutta second order formula:
+N_Runge = np.full(len(t), np.nan) # dummy array for N_Runge to be calculated later
+N_Runge[0] = 100 # assumed initital number of nuclei, respectively 100%
+
+for i in range(len(t)-1):
+    k1 = -lamb*N_Runge[i]
+    k2 = -lamb*(N_Runge[i]+0.5*dt*k1)
+    N_Runge[i+1]=N_Runge[i]+dt*k2
+
+
+N_analytic=N[0]*np.exp(-lamb*t)
+
+print("Halflife:", int(halflife))
+
+test = np.arange(0,10200,200)
+for time in test:
+    i=int(time/dt) # change indices to times (in time array are stored indices, not times, because of the defined dt steps)
+    print(f"t= {t[i]} years, Euler: N= {N[i]:.1f}; Runge-Kutta: N= {N_Runge[i]:.1f}; Analytic: {N_analytic[i]:.1f}")
+
+
+plt.plot(t, N, label="Euler method")
+plt.plot(t, N_analytic, "--", label="Analytical solution")
+#plt.plot(t, N_Runge, label="Runge-Kutta")   the result of Runge-Kutta and of the analytic calculation are identical, so I waved the plot of Runge-Kutta
+plt.xlabel("Time [years]")
+plt.ylabel("Number of radioactive nuclei")
+plt.legend()
+plt.grid()
+plt.show()
+
+print("Runge-Kutta leads to the same results as the analytic calculation! \nUsing steps of dt=200 we can see, that the halflife of Carbon14 must be between 5600 and 5800 years.")
