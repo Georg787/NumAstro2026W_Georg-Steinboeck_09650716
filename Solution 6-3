@@ -1,0 +1,49 @@
+import matplotlib.pyplot as plt
+import scipy.integrate as itg
+import numpy as np
+
+t=np.arange(0, 101, 1) # time array 
+x0=1 # initial displacement is 1
+v0=0 # no motion at t=0
+k=0.2
+m=1
+
+# Analytic Solution:
+def spring(t):
+    x = x0*np.cos(np.sqrt(k/m)*t)+v0*np.sqrt(m/k)*np.sin(np.sqrt(k/m)*t)
+    return x
+
+x = spring(t)
+#for i in t:
+ #   print(f"t: {t[i]}s; x= {x[i]:.4f}m")
+
+# Numerical Solution:
+
+def spring_Runge(t, y):
+    x1, x2 = y
+    dx1_dt = x2
+    dx2_dt = -k/m*x1
+    return [dx1_dt, dx2_dt]
+
+solver = itg.RK45(spring_Runge, t[0], [x0, v0], t[-1], max_step=1) # function, t0, x0, v0, Endzeit, stepsize
+
+x_Runge = np.full(len(t), np.nan)
+x_Runge[0] = x0
+
+for i in range(1, len(t)):
+    while solver.status == "running" and solver.t < t[i]:
+        solver.step()
+    x_Runge[i] = solver.y[0]
+    
+    print(f"t: {t[i]}s; x= {x[i]:.4f}m; x_Runge= {x_Runge[i]:.4f}m")
+
+fig, ax = plt.subplots(figsize=(12, 4))
+plt.plot(t, x, label="Analytic Solution")
+plt.plot(t, x_Runge, "--", label="Runge-Kutta")
+plt.title("Motion of a Spring")
+plt.xlabel("Time [s]")
+plt.ylabel("Displacement x [m]")
+plt.legend()
+plt.grid()
+plt.tight_layout()
+plt.show()
