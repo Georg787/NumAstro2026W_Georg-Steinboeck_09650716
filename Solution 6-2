@@ -1,0 +1,122 @@
+#Exercise 6-2: Tasks A+B:
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+g, l = 9.8,10
+
+dt = 0.2
+t_max = 20
+t=np.arange(0, t_max+dt, dt) # time array 
+
+# Euler formula:
+Theta = np.full(len(t), np.nan) # dummy array for Theta to be calculated later
+Theta1=np.full(len(t), np.nan)
+Theta[0] = 0.1 
+Theta1[0]=0 # pendulum is not moving at t=0
+
+for i in range(len(t)-1):
+    Theta1[i+1]=Theta1[i]-g/l*Theta[i]*dt # 1st ODE: dTheta1/dt=-g/l*Theta
+    Theta[i+1]=Theta[i]+Theta1[i]*dt # 2nd ODE: dTheta2/dt=dTheta1 with Theta2 = Theta
+
+Theta_analytic=Theta[0]*np.cos(np.sqrt(g/l)*t)
+
+Discrepancy=Theta-Theta_analytic
+
+#test = np.arange(0,t_max+dt,dt)
+#for time in test:
+ #   i=int(time/dt) # change indices to times (in time array are stored indices, not times, because of the defined dt steps)
+  #  print(f"t= {t[i]:.1f} s, Euler: Theta= {Theta[i]:.3f}; Analytic: {Theta_analytic[i]:.3f}; Discrepancy= {Discrepancy[i]:.5f}")
+print(f"Displacement at t=20: \nEuler: Theta= {Theta[int(20/dt)]:.3f}; Analytic: Theta= {Theta_analytic[int(20/dt)]:.3f}; Discrepancy = {Discrepancy[int(20/dt)]:.5f}") # 20s is index nr 100 in the time array!
+
+plt.plot(t, Theta, label="Euler method")
+plt.plot(t, Theta_analytic, "--", label="Analytical solution")
+plt.xlabel("Time [s]")
+plt.ylabel("Theta [rad]")
+plt.legend()
+plt.grid()
+plt.show()
+
+for N in range(1,5000): # range must be large enough
+    dt_err=t_max/N
+    Theta_err = np.full(N+1, np.nan)
+    Theta1_err = np.full(N+1, np.nan)
+
+    Theta_err[0] = 0.1
+    Theta1_err[0] = 0
+
+    for i in range(N):
+        Theta1_err[i+1] = Theta1_err[i] - g/l*Theta_err[i]*dt_err
+        Theta_err[i+1] = Theta_err[i] + Theta1_err[i]*dt_err
+
+    Theta_ana = Theta_err[0]*np.cos(np.sqrt(g/l)*20)
+    diff=abs(Theta_err[-1]-Theta_ana)
+    if diff <= 0.01: 
+        print("Calculation for discrepancy < 0.01 at t=20s:")
+        print(f"Displacement at t=20: Euler: Theta= {Theta_err[-1]:.3f}; Analytic: Theta= {Theta_ana:.3f}") 
+        print(f"Discrepancy = {diff:.5f}: necessary time step= {dt_err:.3f}; Iterations: {N}") # t is index in the time array!
+        break
+
+
+# Exercise 6-2: Task C:
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+g, l = 9.8,10
+
+dt = 0.2
+t_max = 20
+t=np.arange(0, t_max+dt, dt) # time array 
+
+# Euler-Cromer formula:
+Theta = np.full(len(t), np.nan) # dummy array for Theta to be calculated later
+Theta1=np.full(len(t), np.nan)
+Theta[0] = 0.1 
+Theta1[0]=0 # pendulum is not moving at t=0
+
+for i in range(len(t)-1):
+    Theta1[i+1]=Theta1[i]-g/l*Theta[i]*dt # 1st ODE: dTheta1/dt=-g/l*Theta
+    Theta[i+1]=Theta[i]+Theta1[i+1]*dt # 2nd ODE: dTheta2/dt=dTheta1 with Theta2 = Theta; but use Theta1[i+1] for Euler-Cromer!!
+
+# Runge Kutta forth order formula:
+Theta_Runge = np.full(len(t), np.nan) # dummy array for Theta_Runge to be calculated later
+Theta1_Runge = np.full(len(t), np.nan) # dummy array for Theta1_Runge to be calculated later
+Theta_Runge[0] = 0.1
+Theta1_Runge[0] = 0
+
+for i in range(len(t)-1):
+    k1_Theta = Theta1_Runge[i]
+    k1_Theta1 = -g/l*Theta_Runge[i] # derivative at the beginning
+    k2_Theta = Theta1_Runge[i]+0.5*dt*k1_Theta1
+    k2_Theta1 = -g/l*(Theta_Runge[i]+0.5*dt*k1_Theta) 
+    k3_Theta = Theta1_Runge[i]+0.5*dt*k2_Theta1
+    k3_Theta1 = -g/l*(Theta_Runge[i]+0.5*dt*k2_Theta)
+    k4_Theta = Theta1_Runge[i]+dt*k3_Theta1
+    k4_Theta1 = -g/l*(Theta_Runge[i]+dt*k3_Theta)
+    
+    Theta_Runge[i+1]=Theta_Runge[i]+1/6*dt*(k1_Theta+2*k2_Theta+2*k3_Theta+k4_Theta)
+    Theta1_Runge[i+1]=Theta1_Runge[i]+1/6*dt*(k1_Theta1+2*k2_Theta1+2*k3_Theta1+k4_Theta1)
+
+Theta_analytic=Theta[0]*np.cos(np.sqrt(g/l)*t)
+
+Discrepancy_Euler=Theta-Theta_analytic
+Discrepancy_Runge=Theta_Runge-Theta_analytic
+
+test = np.arange(0,t_max+dt,dt)
+for time in test:
+    i=int(time/dt) # change indices to times (in time array are stored indices, not times, because of the defined dt steps)
+    print(f"t= {t[i]:.1f} s, Euler: Theta= {Theta[i]:.3f}; Runge-Kutta: {Theta_Runge[i]:.3f}; Analytic: {Theta_analytic[i]:.3f}")
+print(f"Displacement at t=20: \nEuler-Cromer: Theta= {Theta[int(20/dt)]:.3f}")
+print(f"Runge-Kutta= {Theta_Runge[int(20/dt)]:.3f}")
+print(f"Analytic: Theta= {Theta_analytic[int(20/dt)]:.3f}")
+print(f"Discrepancy Euler = {Discrepancy_Euler[int(20/dt)]:.5f}; Discrepancy Runge = {Discrepancy_Runge[int(20/dt)]:.5f}") # 20s is index nr 100 in the time array!
+
+plt.plot(t, Theta, label="Euler-Cromer method")
+plt.plot(t, Theta_analytic, "--", label="Analytical solution")
+# plt.plot(t, Theta_Runge, "r", label="Runge-Kutta method") # Runge Kutta and the analytical solution are so close, that I waived the plot of Runge Kutta!
+plt.xlabel("Time [s]")
+plt.ylabel("Theta [rad]")
+plt.legend()
+plt.grid()
+plt.show()
